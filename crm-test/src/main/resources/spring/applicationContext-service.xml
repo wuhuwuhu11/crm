@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+">
+
+
+
+    <!--引入持久层配置-->
+    <import resource="applicationContext-dao.xml"/>
+
+    <!--声明组件扫描器-->
+    <context:component-scan base-package="com.bjpowernode.crm.settings.service"/>
+    <context:component-scan base-package="com.bjpowernode.crm.workbench.service"/>
+
+    <!--事务配置 声明式事务：在源代码之外，控制事务 声明事务管理器，指定完成事务的具体实体类 commit,rollback-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--指定数据源DataSource-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--配置通知（切面）：指定方法使用的事务管理 id:自定义的通知名称 transaction-manager:事务管理器-->
+    <tx:advice id="myAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--指定方法的事务属性 name:方法名称  isolation:隔离级别 propagation:传播行为
+            rollback-for:回滚的异常类，对于自定义的异常要使用权限定名称，系统的异常类可以名称-->
+
+
+            <tx:method name="save*" isolation="DEFAULT" propagation="REQUIRED"
+                   rollback-for="com.bjpowernode.crm.exception.AjaxRequestException,
+                    com.bjpowernode.crm.exception.TraditionRequestException"/>
+            <tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED"
+                   rollback-for="com.bjpowernode.crm.exception.AjaxRequestException,
+                       com.bjpowernode.crm.exception.TraditionRequestException" />
+            <tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED"
+                   rollback-for="com.bjpowernode.crm.exception.AjaxRequestException,
+                       com.bjpowernode.crm.exception.TraditionRequestException" />
+            <!--除了上面的方法以外的，其他方法-->
+            <tx:method name="*" propagation="SUPPORTS" read-only="true" />
+        </tx:attributes>
+
+    </tx:advice>
+
+    <!--配置aop-->
+    <aop:config>
+        <!--指定切入点-->
+        <aop:pointcut id="servicePt" expression="execution(* *..service..*.*(..))"/>
+        <!--配置增强器对象（通知+切入点）-->
+        <aop:advisor advice-ref="myAdvice" pointcut-ref="servicePt"/>
+    </aop:config>
+
+</beans>
