@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.settings.dao.DictionaryTypeDao">
+
+    <!--boolean insert(DictionaryType dictionaryType);-->
+    <insert id="insert">
+        insert into dictype
+            (code, name, description)
+        values
+            (#{code},#{name},#{description})
+    </insert>
+
+    <!--boolean update(DictionaryType dictionaryType);-->
+    <update id="update">
+        update dictype
+        set name = #{name},description = #{description}
+        where code = #{code}
+    </update>
+
+    <!--boolean deleteByCode(String code);-->
+    <delete id="deleteByCode">
+        delete from tbl_dic_type where code = #{code}
+    </delete>
+
+    <!--
+        boolean deleteListByCodes(String[] codes);
+        delete from tbl_dic_type where code in (?,?,?)
+    -->
+    <delete id="deleteListByCodes">
+        delete from dictype
+        where code in
+        <foreach collection="array" item="c" separator="," open="(" close=")">
+            #{c}
+        </foreach>
+    </delete>
+
+    <!--List<DictionaryType> findAll();-->
+    <select id="findAll" resultType="com.bjpowernode.crm.settings.domain.DictionaryType">
+        select * from dictype
+    </select>
+
+    <!--DictionaryType findByCode(String code);-->
+    <select id="findByCode" resultType="com.bjpowernode.crm.settings.domain.DictionaryType">
+        select * from dictype where code = #{code}
+    </select>
+
+</mapper>

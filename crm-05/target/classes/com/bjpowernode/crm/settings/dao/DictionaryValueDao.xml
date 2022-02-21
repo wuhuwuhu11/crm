@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.settings.dao.DictionaryValueDao">
+
+    <!--int findCountByTypeCode(String code);-->
+    <select id="findCountByTypeCode" resultType="java.lang.Integer">
+        select count(*) from dictype where typeCode = #{code}
+    </select>
+
+    <!--List<DictionaryValue> findAll();-->
+    <select id="findAll" resultType="com.bjpowernode.crm.settings.domain.DictionaryValue">
+        select * from dictype
+    </select>
+</mapper>
